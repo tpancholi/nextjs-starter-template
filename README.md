@@ -2,10 +2,24 @@
 
 ## Getting Started
 
-First, run the development server:
+First, install the packages:
 
 ```bash
-pnpm dev
+pnpm install
+```
+
+Second, run the development server:
+
+```bash
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## What is Included
+
+- PostgreSQL (via docker)
+- Adminer (via docker)
+- ShadCN (Style component)
+- BetterAuth
+- Drizzle

@@ -1,0 +1,6 @@
+BETTER_AUTH_SECRET=<value without quote>
+BETTER_AUTH_URL=http://localhost:3000 #Base URL of your app
+NEXT_PUBLIC_API_URL=http://localhost:3000 # when going to production change to actual domain
+DATABASE_URL=postgres://<user>:<password>@<host>:<port>/<database>
+GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET
