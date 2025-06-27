@@ -4,52 +4,45 @@ import {
   pgTable,
   text,
   timestamp,
-  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const user = pgTable("users", {
-  id: uuid("id").primaryKey(),
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified")
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  createdAt: timestamp("created_at", {
-    precision: 6,
-    withTimezone: true,
-  }).defaultNow(),
-  updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
-export const session = pgTable("sessions", {
-  id: uuid("id").primaryKey(),
+export const sessions = pgTable("sessions", {
+  id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at", {
-    precision: 6,
-    withTimezone: true,
-  }).defaultNow(),
-  updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const account = pgTable("accounts", {
-  id: uuid("id").primaryKey(),
+export const accounts = pgTable("accounts", {
+  id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
@@ -57,37 +50,28 @@ export const account = pgTable("accounts", {
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at", {
-    precision: 6,
-    withTimezone: true,
-  }).defaultNow(),
-  updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
 });
 
-export const verification = pgTable("verifications", {
-  id: uuid("id").primaryKey(),
+export const verifications = pgTable("verifications", {
+  id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: timestamp("expires_at", {
-    precision: 6,
-    withTimezone: true,
-  }).notNull(),
-  createdAt: timestamp("created_at", {
-    precision: 6,
-    withTimezone: true,
-  }).defaultNow(),
-  updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date()
+  ),
 });
 
 export const postsTable = pgTable("posts", {
-  id: uuid().primaryKey(),
-  userId: uuid("user_id")
+  id: text().primaryKey(),
+  userId: text("user_id")
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
   title: varchar({ length: 256 }).notNull(),
   content: text(),
   createdAt: timestamp("created_at", {
@@ -101,13 +85,13 @@ export const postsTable = pgTable("posts", {
 
 // Relationships
 
-export const usersRelations = relations(user, ({ many }) => ({
+export const usersRelations = relations(users, ({ many }) => ({
   posts: many(postsTable),
 }));
 
 export const postsRelations = relations(postsTable, ({ one }) => ({
-  author: one(user, {
+  author: one(users, {
     fields: [postsTable.userId],
-    references: [user.id],
+    references: [users.id],
   }),
 }));

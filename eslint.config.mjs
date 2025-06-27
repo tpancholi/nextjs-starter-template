@@ -42,12 +42,13 @@ const eslintConfig = [
             ignoreMiddleExtensions: true,
           },
         ],
-        "check-file/folder-naming-convention": [
-          "error",
-          {
-            "src/**": "KEBAB_CASE"
-          },
-        ],
+        // this was creating issue with folder structure with betterauth
+        // "check-file/folder-naming-convention": [
+        //   "error",
+        //   {
+        //     "src/**": "KEBAB_CASE"
+        //   },
+        // ],
     },
   },
 ];
